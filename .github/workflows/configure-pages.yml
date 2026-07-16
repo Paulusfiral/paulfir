@@ -1,0 +1,25 @@
+name: Configure GitHub Pages source
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  set-pages-source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - name: Configure Pages to use gh-pages branch
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            await github.request('PUT /repos/{owner}/{repo}/pages', {
+              owner,
+              repo,
+              source: { branch: 'gh-pages', path: '/' }
+            });
+            console.log('Requested Pages source update to gh-pages');
