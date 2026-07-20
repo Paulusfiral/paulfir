@@ -688,12 +688,12 @@ function App() {
             <div className="card hero-card">
               <img
                 ref={heroImageRef}
-                src="/profile.jpg"
+                src="/paulfir/profile.jpg"
                 alt="Paulus Firal"
                 className="hero-image"
                 onError={(e) => {
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = "/profile.svg";
+                  e.currentTarget.src = "/paulfir/profile.svg";
                 }}
               />
               <span className="hero-badge">{t.hero.badge}</span>
