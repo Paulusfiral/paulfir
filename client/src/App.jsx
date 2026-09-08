@@ -1,24 +1,31 @@
 import { useEffect, useRef, useState } from "react";
+import {
+  BriefcaseBusiness,
+  House,
+  LayoutGrid,
+  Mail,
+  UserRound,
+  Wrench,
+} from "lucide-react";
 
 const translations = {
   en: {
     nav: {
       home: "Home",
       about: "About",
-      projects: "Projects",
+      projects: "Experience & Projects",
       skills: "Skills",
       contact: "Contact",
       cv: "CV",
     },
     hero: {
       eyebrow: "Cyber Security | Software Engineer | UI/UX Designer",
-      title:
-        "PAULUS FIRAL OHOIWUTUN. CYBER SECURITY, FULL STACK DEVELOPMENT, AND MODERN WEB EXPERIENCES.",
+      title: "PAULUS FIRAL OHOIWUTUN",
       description:
         "Informatics Engineering student with expertise in cyber security, full stack development, and UI/UX design. Experienced in working on technical projects both in teams and independently, with a focus on security, performance, and user experience.",
       viewProjects: "View Projects",
       viewCV: "View CV",
-      badge: "Informatics Engineering S1",
+      badge: "B.Sc. Informatics Engineering",
       cardTitle: "Cyber Security & Full Stack Engineer",
       cardDescription:
         "7th semester student with experience in security assessment, full stack development, and UI/UX design. Active in organizational activities and industry training.",
@@ -33,7 +40,7 @@ const translations = {
       title:
         "7th semester Informatics Engineering student with experience in web development, network security, and UI/UX design.",
       description:
-        "Currently studying at Perbanas Institute Jakarta with a strong interest in web development, database management, and network security.",
+        "A seventh-semester Informatics Engineering student at Perbanas Institute Jakarta with hands-on experience building and securing systems, including network security assessments (VAPT), Wazuh SIEM implementation, and Windows Server hardening. Completed several full-stack web development projects (DeBOOKS, NakamotoX, Younglings Store, Remesan, and Warungku), and gained internship experience as an RPA Developer, Software Engineer, ERP Developer, and UI/UX Designer at various companies. Active in HIMATIKA and continuously developing cybersecurity skills through PicoCTF, TryHackMe, Hacktrace Ranges, JadiHacker, ITBox, and Coding Studio.",
       points: [
         "Built blockchain donation, food ordering, online top-up, POS systems, and SIEM/NMS support.",
         "Experienced with team-based and independent technical projects.",
@@ -92,17 +99,16 @@ const translations = {
     nav: {
       home: "Beranda",
       about: "Tentang",
-      projects: "Proyek",
+      projects: "Pengalaman dan Proyek",
       skills: "Keahlian",
       contact: "Kontak",
       cv: "CV",
     },
     hero: {
       eyebrow: "Cyber Security | Software Engineer | UI/UX Designer",
-      title:
-        "PAULUS FIRAL OHOIWUTUN. CYBER SECURITY, FULL STACK DEVELOPMENT, DAN UI/UX DESIGNER.",
+      title: "PAULUS FIRAL OHOIWUTUN",
       description:
-        "Mahasiswa Teknik Informatika dengan expertise dalam cyber security, full stack development, dan UI/UX design. Memiliki pengalaman dalam mengerjakan proyek teknis baik tim maupun mandiri, dengan fokus pada keamanan, performa, dan user experience.",
+        "A seventh-semester Informatics Engineering student at Perbanas Institute Jakarta with hands-on experience building and securing systems, including network security assessments (VAPT), Wazuh SIEM implementation, and Windows Server hardening. Completed several full-stack web development projects (DeBOOKS, NakamotoX, Younglings Store, Remesan, and Warungku), and gained internship experience as an RPA Developer, Software Engineer, ERP Developer, and UI/UX Designer at various companies. Active in HIMATIKA and continuously developing cybersecurity skills through PicoCTF, TryHackMe, Hacktrace Ranges, JadiHacker, ITBox, and Coding Studio.",
       viewProjects: "Lihat Proyek",
       viewCV: "Lihat CV",
       badge: "Teknik Informatika S1",
@@ -118,9 +124,9 @@ const translations = {
     about: {
       eyebrow: "Tentang Saya",
       title:
-        "Mahasiswa semester 7 Teknik Informatika dengan pengalaman di web development, keamanan jaringan, dan UI/UX Designer.",
+        "Mahasiswa semester 7 Teknik Informatika dengan pengalaman di Cyber Security, Web Development, dan UI/UX Designer.",
       description:
-        "Mahasiswa Teknik Informatika di Perbanas Institute Jakarta dengan ketertarikan kuat pada pengembangan web, manajemen basis data, dan keamanan jaringan.",
+        "Mahasiswa semester 7 Teknik Informatika di Perbanas Institute Jakarta dengan pengalaman langsung membangun dan mengamankan sistem, mulai dari penilaian keamanan jaringan (VAPT), implementasi Wazuh SIEM, hingga hardening Windows Server. Telah menyelesaikan beberapa proyek pengembangan web full-stack (DeBOOKS, NakamotoX, Younglings Store, Remesan, Warungku) serta magang sebagai RPA Developer, Software Engineer, ERP Developer, dan UI/UX Designer di berbagai perusahaan. Aktif di HIMATIKA dan terus mengasah kemampuan keamanan siber melalui PicoCTF, TryHackMe, Hacktrace Ranges, JadiHacker, ITBox, dan Coding Studio.",
       points: [
         "Membangun sistem donasi blockchain, pemesanan makanan, top-up game, POS inventaris, dan dukungan SIEM/NMS.",
         "Pengalaman proyek tim dan mandiri dalam pengembangan teknis.",
@@ -280,8 +286,8 @@ const projects = {
     {
       title: "Security Assessment",
       description:
-        "Network Security Assessment (VAPT) and SIEM implementation with Wazuh, Zabbix, and Nagios Core.",
-      tags: ["Cyber Security", "VAPT", "SIEM"],
+        "Network Security Assessment (VAPT), server hardening, and SIEM implementation with Wazuh, Zabbix, and Nagios Core.",
+      tags: ["Cyber Security", "VAPT", "Server Hardening", "SIEM"],
       repoUrl: "https://github.com/Paulusfiral",
     },
   ],
@@ -324,8 +330,8 @@ const projects = {
     {
       title: "Security Assessment",
       description:
-        "Penilaian Keamanan Jaringan (VAPT) dan implementasi SIEM dengan Wazuh, Zabbix, dan Nagios Core.",
-      tags: ["Cyber Security", "VAPT", "SIEM"],
+        "Penilaian Keamanan Jaringan (VAPT), hardening server, dan implementasi SIEM dengan Wazuh, Zabbix, dan Nagios Core.",
+      tags: ["Cyber Security", "VAPT", "Hardening Server", "SIEM"],
       repoUrl: "https://github.com/Paulusfiral",
     },
   ],
@@ -333,50 +339,85 @@ const projects = {
 
 const skillGroups = [
   {
-    title: "Programming Languages",
+    title: "Cyber Security",
     items: [
+      "VAPT",
+      "Server Hardening",
+      "SIEM",
+      "DFIR",
+      "Nmap",
+      "Wireshark",
+      "Burp Suite",
+      "OWASP ZAP",
+      "Metasploit",
+      "Nessus",
+      "Nikto",
+      "sqlmap",
+      "Gobuster",
+      "LinPEAS",
+      "WinPEAS",
+      "BloodHound",
+      "Mimikatz",
+      "Hashcat",
+      "John the Ripper",
+      "Hydra",
+      "Aircrack-ng",
+      "Wazuh SIEM",
+      "Splunk",
+      "ELK Stack",
+      "Zabbix",
+      "Nagios Core",
+      "Kali Linux",
+    ],
+  },
+  {
+    title: "Bahasa Pemrograman",
+    items: [
+      "HTML",
+      "CSS",
       "JavaScript",
       "TypeScript",
       "Python",
       "PHP",
-      "HTML/CSS",
       "Solidity",
     ],
   },
   {
-    title: "Full Stack & Frameworks",
+    title: "Full Stack Development",
     items: [
       "React.js",
       "Next.js",
+      "Tailwind CSS",
+      "Bootstrap",
       "Node.js",
       "Express.js",
       "Flask",
-      "Laravel",
       "REST API",
+      "Laravel",
     ],
   },
   {
-    title: "Database & DevOps",
+    title: "ERP and Enterprise Systems",
     items: [
-      "PostgreSQL",
-      "MySQL",
-      "MongoDB",
-      "Firebase",
-      "Git",
-      "Docker",
-      "Vercel",
+      "ERPNext",
+      "Frappe Framework",
+      "Inventory",
+      "Accounting",
+      "Sales",
+      "HR",
     ],
   },
   {
-    title: "Security & Tools",
-    items: [
-      "VAPT",
-      "Wazuh SIEM",
-      "Wireshark",
-      "Burp Suite",
-      "Zabbix",
-      "Nagios Core",
-    ],
+    title: "Basis Data",
+    items: ["PostgreSQL", "MariaDB", "MySQL", "MongoDB", "SQLite", "Firebase"],
+  },
+  {
+    title: "DevOps & Deployment",
+    items: ["Git", "GitHub", "Vercel", "Docker", "Clodios"],
+  },
+  {
+    title: "Tools and Design",
+    items: ["VS Code", "XAMPP", "DBeaver", "Postman"],
   },
 ];
 
@@ -414,36 +455,46 @@ const services = {
 const experienceDetails = {
   en: [
     {
-      period: "2023-2024",
-      title: "Development & Security Learning",
-      text: "Completed technical projects like DeBOOKS blockchain, Network Security Assessment (VAPT), and SIEM/NMS implementation.",
+      period: "Aug 2026",
+      title: "ERP Developer · PT Gema Cendekia Gemilang",
+      text: "Developing and supporting enterprise resource planning workflows and business systems.",
     },
     {
-      period: "2025",
-      title: "RPA Cyclone",
-      text: "Internship at PT Langit Inovasi Aksi Teknologi focusing on Robotic Process Automation and Wazuh SIEM implementation for security monitoring.",
+      period: "Jul 2026",
+      title: "Software Engineer · LAKESPRA",
+      text: "Building software solutions with a focus on reliable implementation and practical user needs.",
     },
     {
-      period: "2026",
-      title: "UI/UX Designer",
-      text: "UI/UX Designer at PT Aplikasi BenerIT Nusantara, actively participating in cyber security training and advanced programming courses.",
+      period: "Mar - Jun 2026",
+      title: "UI/UX Designer · PT Aplikasi BenerIT Nusantara",
+      text: "Designing clear, responsive interfaces and translating user needs into practical digital experiences.",
+    },
+    {
+      period: "Sep - Dec 2025",
+      title: "RPA Cyclone · PT Langit Inovasi Aksi Teknologi",
+      text: "Working on Robotic Process Automation.",
     },
   ],
   id: [
     {
-      period: "2023-2024",
-      title: "Development & Security Learning",
-      text: "Menyelesaikan proyek-proyek teknis seperti DeBOOKS blockchain, Network Security Assessment (VAPT), dan SIEM/NMS implementation.",
+      period: "Agustus 2026",
+      title: "ERP Developer · PT Gema Cendekia Gemilang",
+      text: "Mengembangkan dan mendukung alur kerja enterprise resource planning serta sistem bisnis.",
     },
     {
-      period: "2025",
-      title: "RPA Cyclone",
-      text: "Magang di PT Langit Inovasi Aksi Teknologi fokus pada Robotic Process Automation dan implementasi Wazuh SIEM untuk security monitoring.",
+      period: "Juli 2026",
+      title: "Software Engineer · LAKESPRA",
+      text: "Membangun solusi perangkat lunak dengan fokus pada implementasi yang andal dan kebutuhan pengguna.",
     },
     {
-      period: "2026",
-      title: "UI/UX Designer",
-      text: "UI/UX Designer di PT Aplikasi BenerIT Nusantara, serta aktif mengikuti pelatihan cyber security dan advanced programming.",
+      period: "Maret - Juni 2026",
+      title: "UI/UX Designer · PT Aplikasi BenerIT Nusantara",
+      text: "Merancang interface yang jelas dan responsif serta menerjemahkan kebutuhan pengguna menjadi pengalaman digital yang praktis.",
+    },
+    {
+      period: "September - Desember 2025",
+      title: "RPA Cyclone · PT Langit Inovasi Aksi Teknologi",
+      text: "Mengerjakan Robotic Process Automation.",
     },
   ],
 };
@@ -452,11 +503,13 @@ const certificates = {
   en: [
     "Technical expertise certificate",
     "Web development training certificate",
+    "Cyber security development training certificate",
     "Project and digital competency certificate",
   ],
   id: [
     "Sertifikat keahlian teknis",
     "Sertifikat pelatihan pengembangan web",
+    "Sertifikat pelatihan pengembangan cyber security",
     "Sertifikat proyek dan kompetensi digital",
   ],
 };
@@ -466,6 +519,7 @@ function App() {
   const [status, setStatus] = useState("Memuat...");
   const [language, setLanguage] = useState("id");
   const [theme, setTheme] = useState("dark");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [formData, setFormData] = useState({
     name: "",
@@ -473,6 +527,7 @@ function App() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // "cv" or "certificates"
   const orbRef = useRef(null);
@@ -536,7 +591,14 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    const sectionIds = ["home", "about", "projects", "skills", "contact"];
+    const sectionIds = [
+      "home",
+      "about",
+      "experience",
+      "projects",
+      "skills",
+      "contact",
+    ];
     const sections = sectionIds
       .map((id) => document.getElementById(id))
       .filter(Boolean);
@@ -585,15 +647,32 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    if (data.ok) {
+    setSubmitted(false);
+    setSubmitError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Contact service unavailable");
+      }
       setSubmitted(true);
       setFormData({ name: "", email: "", message: "" });
+    } catch {
+      const subject = encodeURIComponent(`Portfolio contact from ${formData.name}`);
+      const body = encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`,
+      );
+      window.location.href = `mailto:firalohoiwutunnn@gmail.com?subject=${subject}&body=${body}`;
+      setSubmitError(
+        language === "en"
+          ? "Your email app is opening to finish sending the message."
+          : "Aplikasi email sedang dibuka untuk menyelesaikan pengiriman pesan.",
+      );
     }
   };
 
@@ -604,7 +683,25 @@ function App() {
           <a href="#home" className="brand">
             PAULUS
           </a>
-          <nav className="nav-links">
+          <button
+            className="menu-toggle"
+            type="button"
+            aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+          <nav
+            className={`nav-links ${mobileMenuOpen ? "is-open" : ""}`}
+            onClick={(event) => {
+              if (event.target.closest("a")) {
+                setMobileMenuOpen(false);
+              }
+            }}
+          >
             <a
               href="#home"
               className={activeSection === "home" ? "active" : ""}
@@ -620,9 +717,13 @@ function App() {
               {t.nav.about}
             </a>
             <a
-              href="#projects"
-              className={activeSection === "projects" ? "active" : ""}
-              onClick={() => setActiveSection("projects")}
+              href="#experience"
+              className={
+                activeSection === "experience" || activeSection === "projects"
+                  ? "active"
+                  : ""
+              }
+              onClick={() => setActiveSection("experience")}
             >
               {t.nav.projects}
             </a>
@@ -657,6 +758,57 @@ function App() {
         </div>
       </header>
 
+      <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
+        <a
+          href="#home"
+          className={activeSection === "home" ? "active" : ""}
+          onClick={() => setActiveSection("home")}
+        >
+          <House aria-hidden="true" />
+          <span>{t.nav.home}</span>
+        </a>
+        <a
+          href="#about"
+          className={activeSection === "about" ? "active" : ""}
+          onClick={() => setActiveSection("about")}
+        >
+          <UserRound aria-hidden="true" />
+          <span>{t.nav.about}</span>
+        </a>
+        <a
+          href="#experience"
+          className={activeSection === "experience" ? "active" : ""}
+          onClick={() => setActiveSection("experience")}
+        >
+          <BriefcaseBusiness aria-hidden="true" />
+          <span>{language === "en" ? "Experience" : "Pengalaman"}</span>
+        </a>
+        <a
+          href="#projects"
+          className={activeSection === "projects" ? "active" : ""}
+          onClick={() => setActiveSection("projects")}
+        >
+          <LayoutGrid aria-hidden="true" />
+          <span>{language === "en" ? "Projects" : "Proyek"}</span>
+        </a>
+        <a
+          href="#skills"
+          className={activeSection === "skills" ? "active" : ""}
+          onClick={() => setActiveSection("skills")}
+        >
+          <Wrench aria-hidden="true" />
+          <span>{t.nav.skills}</span>
+        </a>
+        <a
+          href="#contact"
+          className={activeSection === "contact" ? "active" : ""}
+          onClick={() => setActiveSection("contact")}
+        >
+          <Mail aria-hidden="true" />
+          <span>{t.nav.contact}</span>
+        </a>
+      </nav>
+
       <main id="home">
         <section className="hero reveal-on-scroll">
           <div className="container hero-grid">
@@ -665,13 +817,12 @@ function App() {
               <h1 className="hero-title">
                 <span>{t.hero.title}</span>
               </h1>
-              <p className="hero-text">{t.hero.description}</p>
               <div className="hero-actions">
                 <a href="#projects" className="btn btn-primary">
                   {t.hero.viewProjects}
                 </a>
                 <a
-                  href="/CV.pdf"
+                  href={`${import.meta.env.BASE_URL}Curriculum_Vitae_Paulus_Firal_Ohoiwutun.pdf`}
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-secondary"
@@ -679,11 +830,6 @@ function App() {
                   {t.hero.viewCV}
                 </a>
               </div>
-              <ul className="highlight-list">
-                {highlights[language].map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
             </div>
             <div className="card hero-card">
               <img
@@ -697,29 +843,7 @@ function App() {
                 }}
               />
               <span className="hero-badge">{t.hero.badge}</span>
-              <h3>{t.hero.cardTitle}</h3>
-              <p>{t.hero.cardDescription}</p>
-              <div className="divider" />
-              <ul className="hero-side-list">
-                <li>Full Stack: React, Next.js, Node.js, Express, Flask</li>
-                <li>
-                  Cyber Security: VAPT, SIEM, Network Monitoring, Wireshark,
-                  Burp Suite
-                </li>
-                <li>Design: UI/UX, Responsive, Professional Interfaces</li>
-              </ul>
             </div>
-          </div>
-        </section>
-
-        <section className="section reveal-on-scroll">
-          <div className="container stats-grid">
-            {stats[language].map((item) => (
-              <div className="card stat-card" key={item.label}>
-                <strong>{item.value}</strong>
-                <span>{item.label}</span>
-              </div>
-            ))}
           </div>
         </section>
 
@@ -729,11 +853,6 @@ function App() {
               <p className="eyebrow">{t.about.eyebrow}</p>
               <h2>{t.about.title}</h2>
               <p>{t.about.description}</p>
-              <ul className="about-highlights">
-                {t.about.points.map((point) => (
-                  <li key={point}>{point}</li>
-                ))}
-              </ul>
             </div>
           </div>
         </section>
@@ -741,33 +860,32 @@ function App() {
         <section id="experience" className="section reveal-on-scroll">
           <div className="container">
             <p className="eyebrow">
-              {language === "en" ? "Experience" : "Pengalaman"}
+              {language === "en"
+                ? "Experience & Projects"
+                : "Pengalaman dan Proyek"}
             </p>
             <h2>
               {language === "en"
                 ? "Roles and projects that show my growth."
-                : "Peran dan proyek yang menunjukkan perkembangan saya."}
+                : "Pengalaman dan proyek yang menunjukkan perkembangan saya."}
             </h2>
-            <div className="experience-grid">
-              {experienceDetails[language].map((item) => (
-                <article className="card experience-card" key={item.title}>
-                  <span>{item.period}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
+            <div className="experience-grid timeline">
+              {experienceDetails[language].map((item, index) => (
+                <article
+                  className="experience-card timeline-item"
+                  key={item.title}
+                >
+                  <div className="timeline-marker" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-meta">
+                      <span>{item.period}</span>
+                    </div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
                 </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section alt">
-          <div className="container">
-            <div className="service-grid">
-              {services[language].map((service) => (
-                <div className="card service-card" key={service.title}>
-                  <h3>{service.title}</h3>
-                  <p>{service.text}</p>
-                </div>
               ))}
             </div>
           </div>
@@ -796,7 +914,7 @@ function App() {
                     : "Unduh CV saya untuk melihat ringkasan pengalaman, fokus belajar, dan kemampuan yang saya kembangkan."}
                 </p>
                 <a
-                  href="/CV.pdf"
+                  href={`${import.meta.env.BASE_URL}Curriculum_Vitae_Paulus_Firal_Ohoiwutun.pdf`}
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-repo"
@@ -973,6 +1091,7 @@ function App() {
                     : "Pesan berhasil dikirim."}
                 </p>
               )}
+              {submitError && <p className="submit-error">{submitError}</p>}
             </form>
           </div>
         </section>
@@ -1050,7 +1169,7 @@ function App() {
                   className="btn btn-repo modal-repo-btn"
                   href={
                     activeModal === "cv"
-                      ? "/CV.pdf"
+                      ? `${import.meta.env.BASE_URL}Curriculum_Vitae_Paulus_Firal_Ohoiwutun.pdf`
                       : "https://drive.google.com/drive/folders/18uoZ5SoLZ9icB7tEromP7mooWIEfem2o?usp=sharing"
                   }
                   target="_blank"
