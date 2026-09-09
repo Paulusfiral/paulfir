@@ -83,8 +83,10 @@ const translations = {
         "Creating user-friendly, accessible, and professional interfaces for optimal user experience.",
     },
     contact: {
-      title: "Get in Touch",
-      description: "Let's discuss your project or collaboration opportunity.",
+      eyebrow: "Contact",
+      heading: "Let's connect for collaboration and your next project.",
+      description:
+        "I'm open to discussions, ideas, or needs for a more modern and functional website.",
       name: "Your Name",
       email: "Your Email",
       message: "Your Message",
@@ -169,8 +171,10 @@ const translations = {
         "Menciptakan interface yang user-friendly, accessible, dan profesional untuk pengalaman pengguna yang optimal.",
     },
     contact: {
-      title: "Hubungi Saya",
-      description: "Mari kita diskusikan proyek atau peluang kolaborasi Anda.",
+      eyebrow: "Kontak",
+      heading: "Terhubung dengan saya untuk kolaborasi dan proyek berikutnya.",
+      description:
+        "Saya terbuka untuk diskusi, ide, atau kebutuhan website yang lebih modern dan fungsional.",
       name: "Nama Anda",
       email: "Email Anda",
       message: "Pesan Anda",
@@ -394,6 +398,8 @@ const skillGroups = [
       "Flask",
       "REST API",
       "Laravel",
+      "Flutter",
+      "Dart",
     ],
   },
   {
@@ -527,6 +533,7 @@ function App() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // "cv" or "certificates"
@@ -649,30 +656,61 @@ function App() {
     e.preventDefault();
     setSubmitted(false);
     setSubmitError("");
+    setSending(true);
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://formsubmit.co/ajax/firalohoiwutunnn@gmail.com",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+            _subject: `Pesan Baru Portfolio dari ${formData.name}`,
+            _template: "table",
+            _captcha: "false",
+          }),
+        },
+      );
+
       const data = await res.json();
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Contact service unavailable");
+      if (res.ok && (data.success === "true" || data.success === true)) {
+        setSubmitted(true);
+        setFormData({ name: "", email: "", message: "" });
+      } else if (
+        data.message &&
+        data.message.toLowerCase().includes("activation")
+      ) {
+        setSubmitted(true);
+        setFormData({ name: "", email: "", message: "" });
+        setSubmitError(
+          language === "en"
+            ? "Activation email sent to firalohoiwutunnn@gmail.com. Please confirm it once to start receiving messages!"
+            : "Email aktivasi telah dikirim ke firalohoiwutunnn@gmail.com. Silakan klik 'Activate Form' di email sekali saja!",
+        );
+      } else {
+        throw new Error(data.message || "Failed to send message");
       }
-      setSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
     } catch {
-      const subject = encodeURIComponent(`Portfolio contact from ${formData.name}`);
+      const subject = encodeURIComponent(
+        `Portfolio contact from ${formData.name}`,
+      );
       const body = encodeURIComponent(
         `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`,
       );
       window.location.href = `mailto:firalohoiwutunnn@gmail.com?subject=${subject}&body=${body}`;
       setSubmitError(
         language === "en"
-          ? "Your email app is opening to finish sending the message."
-          : "Aplikasi email sedang dibuka untuk menyelesaikan pengiriman pesan.",
+          ? "Network error. Opening your email app to send directly..."
+          : "Gagal mengirim otomatis. Membuka aplikasi email Anda untuk mengirim pesan...",
       );
+    } finally {
+      setSending(false);
     }
   };
 
@@ -681,7 +719,13 @@ function App() {
       <header className="site-header">
         <div className="container nav-bar">
           <a href="#home" className="brand">
-            PAULUS
+            <img
+              className="brand-mark"
+              src={`${import.meta.env.BASE_URL}logo.svg`}
+              alt=""
+              aria-hidden="true"
+            />
+            <span>PAULUS FIRAL</span>
           </a>
           <button
             className="menu-toggle"
@@ -733,6 +777,13 @@ function App() {
               onClick={() => setActiveSection("skills")}
             >
               {t.nav.skills}
+            </a>
+            <a
+              href="#contact"
+              className={activeSection === "contact" ? "active" : ""}
+              onClick={() => setActiveSection("contact")}
+            >
+              {t.nav.contact}
             </a>
             <button
               className="theme-toggle"
@@ -1024,19 +1075,9 @@ function App() {
         <section id="contact" className="section alt reveal-on-scroll">
           <div className="container contact-grid">
             <div>
-              <p className="eyebrow">
-                {language === "en" ? "Contact" : "Kontak"}
-              </p>
-              <h2>
-                {language === "en"
-                  ? "Let's connect for collaboration and your next project."
-                  : "Terhubung dengan saya untuk kolaborasi dan proyek berikutnya."}
-              </h2>
-              <p>
-                {language === "en"
-                  ? "I'm open to discussions, ideas, or needs for a more modern and functional website."
-                  : "Saya terbuka untuk diskusi, ide, atau kebutuhan website yang lebih modern dan fungsional."}
-              </p>
+              <p className="eyebrow">{t.contact.eyebrow}</p>
+              <h2>{t.contact.heading}</h2>
+              <p>{t.contact.description}</p>
               <div className="contact-links">
                 <a
                   href="https://github.com/Paulusfiral"
@@ -1052,11 +1093,29 @@ function App() {
                 >
                   LinkedIn
                 </a>
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=firalohoiwutunnn@gmail.com&su=Halo%20Paulus%20-%20Diskusi%20Proyek"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Kirim email ke firalohoiwutunnn@gmail.com"
+                  onClick={(e) => {
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(
+                      navigator.userAgent,
+                    );
+                    if (isMobile) {
+                      e.preventDefault();
+                      window.location.href =
+                        "mailto:firalohoiwutunnn@gmail.com?subject=Halo%20Paulus%20-%20Diskusi%20Proyek";
+                    }
+                  }}
+                >
+                  Email
+                </a>
               </div>
             </div>
             <form className="card contact-form" onSubmit={handleSubmit}>
               <input
-                placeholder={language === "en" ? "Your Name" : "Nama"}
+                placeholder={t.contact.name}
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -1065,7 +1124,7 @@ function App() {
               />
               <input
                 type="email"
-                placeholder={language === "en" ? "Your Email" : "Email"}
+                placeholder={t.contact.email}
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -1073,7 +1132,7 @@ function App() {
                 required
               />
               <textarea
-                placeholder={language === "en" ? "Your Message" : "Pesan"}
+                placeholder={t.contact.message}
                 rows="4"
                 value={formData.message}
                 onChange={(e) =>
@@ -1081,15 +1140,28 @@ function App() {
                 }
                 required
               />
-              <button type="submit" className="btn btn-primary">
-                {language === "en" ? "Send Message" : "Kirim Pesan"}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={sending}
+              >
+                {sending ? t.contact.sending : t.contact.send}
               </button>
               {submitted && (
-                <p className="success-msg">
-                  {language === "en"
-                    ? "Message sent successfully!"
-                    : "Pesan berhasil dikirim."}
-                </p>
+                <div className="success-msg">
+                  <p style={{ margin: "0.25rem 0", fontWeight: 700 }}>
+                    {t.contact.success}
+                  </p>
+                  <p
+                    style={{
+                      margin: "0.25rem 0",
+                      fontSize: "0.88rem",
+                      opacity: 0.9,
+                    }}
+                  >
+                    {t.contact.successMsg}
+                  </p>
+                </div>
               )}
               {submitError && <p className="submit-error">{submitError}</p>}
             </form>

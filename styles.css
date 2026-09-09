@@ -50,9 +50,11 @@ a {
 
 .site-header {
   position: fixed;
+  top: 0;
   inset: 0 0 auto 0;
   width: 100%;
-  z-index: 20;
+  z-index: 1000;
+  will-change: transform;
   backdrop-filter: blur(16px);
   background: rgba(7, 17, 31, 0.92);
   border-bottom: 1px solid var(--border);
