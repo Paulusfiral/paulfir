@@ -1087,7 +1087,7 @@ function App() {
                   GitHub
                 </a>
                 <a
-                  href="https://www.linkedin.com/in/firal-ohoiwutun-377874370"
+                  href="https://www.linkedin.com/in/paulus-firal-ohoiwutun/"
                   target="_blank"
                   rel="noreferrer"
                 >
