@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>Logo Paulus Firal Ohoiwutun</title>
+  <rect width="64" height="64" rx="18" fill="#07111f" />
+  <path d="M32 5 55 18v28L32 59 9 46V18L32 5Z" fill="none" stroke="#5eead4" stroke-width="2.5" />
+  <path d="M23 45V19h10.5c7.2 0 11.5 3.7 11.5 9.5S40.7 38 33.5 38H29v7" fill="none" stroke="#5eead4" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+  <path d="M29 25v7h4.2c3.1 0 5-1.2 5-3.5s-1.9-3.5-5-3.5H29Z" fill="#07111f" />
+</svg>
