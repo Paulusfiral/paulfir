@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { InteractiveNeuralVortex } from "@/components/ui/interactive-neural-vortex-background";
 import {
   BriefcaseBusiness,
   House,
@@ -41,6 +42,8 @@ const translations = {
         "7th semester Informatics Engineering student with experience in web development, network security, and UI/UX design.",
       description:
         "A seventh-semester Informatics Engineering student at Perbanas Institute Jakarta with hands-on experience building and securing systems, including network security assessments (VAPT), Wazuh SIEM implementation, and Windows Server hardening. Completed several full-stack web development projects (DeBOOKS, NakamotoX, Younglings Store, Remesan, and Warungku), and gained internship experience as an RPA Developer, Software Engineer, ERP Developer, and UI/UX Designer at various companies. Active in HIMATIKA and continuously developing cybersecurity skills through PicoCTF, TryHackMe, Hacktrace Ranges, JadiHacker, ITBox, and Coding Studio.",
+      readMore: "View details",
+      readLess: "Show less",
       points: [
         "Built blockchain donation, food ordering, online top-up, POS systems, and SIEM/NMS support.",
         "Experienced with team-based and independent technical projects.",
@@ -129,6 +132,8 @@ const translations = {
         "Mahasiswa semester 7 Teknik Informatika dengan pengalaman di Cyber Security, Web Development, dan UI/UX Designer.",
       description:
         "Mahasiswa semester 7 Teknik Informatika di Perbanas Institute Jakarta dengan pengalaman langsung membangun dan mengamankan sistem, mulai dari penilaian keamanan jaringan (VAPT), implementasi Wazuh SIEM, hingga hardening Windows Server. Telah menyelesaikan beberapa proyek pengembangan web full-stack (DeBOOKS, NakamotoX, Younglings Store, Remesan, Warungku) serta magang sebagai RPA Developer, Software Engineer, ERP Developer, dan UI/UX Designer di berbagai perusahaan. Aktif di HIMATIKA dan terus mengasah kemampuan keamanan siber melalui PicoCTF, TryHackMe, Hacktrace Ranges, JadiHacker, ITBox, dan Coding Studio.",
+      readMore: "Lihat detail",
+      readLess: "Sembunyikan",
       points: [
         "Membangun sistem donasi blockchain, pemesanan makanan, top-up game, POS inventaris, dan dukungan SIEM/NMS.",
         "Pengalaman proyek tim dan mandiri dalam pengembangan teknis.",
@@ -537,10 +542,77 @@ function App() {
   const [submitError, setSubmitError] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // "cv" or "certificates"
+  const [aboutExpanded, setAboutExpanded] = useState(false);
   const orbRef = useRef(null);
   const heroImageRef = useRef(null);
+  const scrollProgressRef = useRef(null);
+
+  const handleNavClick = (sectionId) => {
+    setActiveSection(sectionId);
+    setMobileMenuOpen(false);
+
+    const section = document.getElementById(sectionId);
+    if (section) {
+      const headerOffset = 90;
+      const elementPosition = section.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const t = translations[language];
+
+  useEffect(() => {
+    const pointerHoverTargets = document.querySelectorAll(
+      ".brand, .nav-links a, .nav-links button, .menu-toggle, .lang-toggle, .theme-toggle, .btn, .highlight-list li, .status-pill, .card, .stat-card, .hero-card, .project-card, .service-card, .experience-card, .certificate-card, .skill-card, .tag-list span, .contact-links a, .site-footer a",
+    );
+
+    const handlePointerMove = (event) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      const rotateY = (x / 100 - 0.5) * 10;
+      const rotateX = (0.5 - y / 100) * 10;
+
+      event.currentTarget.style.setProperty("--pointer-x", `${x}%`);
+      event.currentTarget.style.setProperty("--pointer-y", `${y}%`);
+      event.currentTarget.style.setProperty(
+        "--tilt-x",
+        `${rotateX.toFixed(2)}deg`,
+      );
+      event.currentTarget.style.setProperty(
+        "--tilt-y",
+        `${rotateY.toFixed(2)}deg`,
+      );
+    };
+
+    const handlePointerLeave = (event) => {
+      event.currentTarget.style.removeProperty("--pointer-x");
+      event.currentTarget.style.removeProperty("--pointer-y");
+      event.currentTarget.style.setProperty("--tilt-x", "0deg");
+      event.currentTarget.style.setProperty("--tilt-y", "0deg");
+    };
+
+    pointerHoverTargets.forEach((element) => {
+      element.style.setProperty("--pointer-x", "50%");
+      element.style.setProperty("--pointer-y", "50%");
+      element.style.setProperty("--tilt-x", "0deg");
+      element.style.setProperty("--tilt-y", "0deg");
+      element.addEventListener("pointermove", handlePointerMove);
+      element.addEventListener("pointerleave", handlePointerLeave);
+    });
+
+    return () => {
+      pointerHoverTargets.forEach((element) => {
+        element.removeEventListener("pointermove", handlePointerMove);
+        element.removeEventListener("pointerleave", handlePointerLeave);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     setReady(true);
@@ -562,6 +634,14 @@ function App() {
 
     const onScroll = () => {
       const scrollY = window.scrollY;
+      const scrollableHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress =
+        scrollableHeight > 0 ? scrollY / scrollableHeight : 0;
+
+      if (scrollProgressRef.current) {
+        scrollProgressRef.current.style.transform = `scaleX(${scrollProgress})`;
+      }
       if (orbRef.current) {
         orbRef.current.style.transform = `translate3d(${scrollY * 0.02}px, ${scrollY * 0.02}px, 0)`;
       }
@@ -716,6 +796,11 @@ function App() {
 
   return (
     <div className={`app-shell ${ready ? "is-ready" : ""}`}>
+      <div
+        className="scroll-progress"
+        ref={scrollProgressRef}
+        aria-hidden="true"
+      />
       <header className="site-header">
         <div className="container nav-bar">
           <a href="#home" className="brand">
@@ -781,7 +866,10 @@ function App() {
             <a
               href="#contact"
               className={activeSection === "contact" ? "active" : ""}
-              onClick={() => setActiveSection("contact")}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick("contact");
+              }}
             >
               {t.nav.contact}
             </a>
@@ -793,8 +881,13 @@ function App() {
                   ? "Switch to light mode"
                   : "Switch to dark mode"
               }
+              aria-label={
+                theme === "dark"
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+              }
             >
-              {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+              {theme === "dark" ? "☀️" : "🌙"}
             </button>
             <button
               className="lang-toggle"
@@ -853,7 +946,10 @@ function App() {
         <a
           href="#contact"
           className={activeSection === "contact" ? "active" : ""}
-          onClick={() => setActiveSection("contact")}
+          onClick={(event) => {
+            event.preventDefault();
+            handleNavClick("contact");
+          }}
         >
           <Mail aria-hidden="true" />
           <span>{t.nav.contact}</span>
@@ -862,6 +958,7 @@ function App() {
 
       <main id="home">
         <section className="hero reveal-on-scroll">
+          <InteractiveNeuralVortex />
           <div className="container hero-grid">
             <div className="hero-copy">
               <p className="eyebrow">{t.hero.eyebrow}</p>
@@ -901,25 +998,35 @@ function App() {
         <section id="about" className="section reveal-on-scroll">
           <div className="container about-grid">
             <div className="card about-card">
-              <p className="eyebrow">{t.about.eyebrow}</p>
+              <p className="eyebrow section-label">{t.about.eyebrow}</p>
               <h2>{t.about.title}</h2>
-              <p>{t.about.description}</p>
+              <p
+                className={`about-description ${aboutExpanded ? "is-expanded" : ""}`}
+              >
+                {t.about.description}
+              </p>
+              <button
+                className="about-toggle"
+                type="button"
+                aria-expanded={aboutExpanded}
+                onClick={() => setAboutExpanded(!aboutExpanded)}
+              >
+                <span>
+                  {aboutExpanded ? t.about.readLess : t.about.readMore}
+                </span>
+                <span aria-hidden="true">{aboutExpanded ? "−" : "+"}</span>
+              </button>
             </div>
           </div>
         </section>
 
         <section id="experience" className="section reveal-on-scroll">
           <div className="container">
-            <p className="eyebrow">
+            <p className="eyebrow section-label">
               {language === "en"
                 ? "Experience & Projects"
                 : "Pengalaman dan Proyek"}
             </p>
-            <h2>
-              {language === "en"
-                ? "Roles and projects that show my growth."
-                : "Pengalaman dan proyek yang menunjukkan perkembangan saya."}
-            </h2>
             <div className="experience-grid timeline">
               {experienceDetails[language].map((item, index) => (
                 <article
@@ -1049,14 +1156,9 @@ function App() {
 
         <section id="skills" className="section reveal-on-scroll">
           <div className="container">
-            <p className="eyebrow">
+            <p className="eyebrow section-label">
               {language === "en" ? "Skills" : "Keahlian"}
             </p>
-            <h2>
-              {language === "en"
-                ? "Technologies I currently use and study."
-                : "Teknologi yang saat ini saya gunakan dan pelajari."}
-            </h2>
             <div className="skill-grid">
               {skillGroups.map((group) => (
                 <div className="card skill-card" key={group.title}>
@@ -1075,7 +1177,7 @@ function App() {
         <section id="contact" className="section alt reveal-on-scroll">
           <div className="container contact-grid">
             <div>
-              <p className="eyebrow">{t.contact.eyebrow}</p>
+              <p className="eyebrow section-label">{t.contact.eyebrow}</p>
               <h2>{t.contact.heading}</h2>
               <p>{t.contact.description}</p>
               <div className="contact-links">
@@ -1083,20 +1185,37 @@ function App() {
                   href="https://github.com/Paulusfiral"
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="GitHub Paulus Firal"
+                  title="GitHub"
                 >
-                  GitHub
+                  <svg
+                    className="contact-brand-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2C6.48 2 2 6.58 2 12.24c0 4.52 2.87 8.35 6.84 9.71.5.1.68-.22.68-.49v-1.72c-2.78.62-3.37-1.22-3.37-1.22-.46-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.58 2.35 1.12 2.93.86.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.02-2.75-.1-.26-.44-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.2 9.2 0 0 1 12 9.1a9.2 9.2 0 0 1 2.5.35c1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.21 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.8-4.58 5.05.36.32.68.94.68 1.9v2.65c0 .27.18.6.69.49A10.24 10.24 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z" />
+                  </svg>
                 </a>
                 <a
                   href="https://www.linkedin.com/in/paulus-firal-ohoiwutun/"
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="LinkedIn Paulus Firal"
+                  title="LinkedIn"
                 >
-                  LinkedIn
+                  <svg
+                    className="contact-brand-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M5.2 3.5a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4ZM3.3 9.2h3.8V21H3.3V9.2Zm6.2 0h3.6v1.61h.05c.5-.95 1.72-1.95 3.55-1.95 3.8 0 4.5 2.5 4.5 5.76V21h-3.8v-5.66c0-1.35-.03-3.08-1.88-3.08-1.88 0-2.17 1.47-2.17 2.98V21H9.5V9.2Z" />
+                  </svg>
                 </a>
                 <a
                   href="https://mail.google.com/mail/?view=cm&fs=1&to=firalohoiwutunnn@gmail.com&su=Halo%20Paulus%20-%20Diskusi%20Proyek"
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="Email Paulus Firal"
                   title="Kirim email ke firalohoiwutunnn@gmail.com"
                   onClick={(e) => {
                     const isMobile = /iPhone|iPad|iPod|Android/i.test(
@@ -1109,7 +1228,7 @@ function App() {
                     }
                   }}
                 >
-                  Email
+                  <Mail aria-hidden="true" />
                 </a>
               </div>
             </div>
