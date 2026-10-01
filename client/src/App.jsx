@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { InteractiveNeuralVortex } from "@/components/ui/interactive-neural-vortex-background";
 import {
+  ArrowUp,
   BriefcaseBusiness,
   House,
   LayoutGrid,
@@ -9,12 +10,15 @@ import {
   Wrench,
 } from "lucide-react";
 
+const CyberOrb = lazy(() => import("@/components/ui/cyber-orb"));
+
 const translations = {
   en: {
     nav: {
       home: "Home",
       about: "About",
-      projects: "Experience & Projects",
+      projects: "Experience",
+      projectList: "Projects",
       skills: "Skills",
       contact: "Contact",
       cv: "CV",
@@ -104,7 +108,8 @@ const translations = {
     nav: {
       home: "Beranda",
       about: "Tentang",
-      projects: "Pengalaman dan Proyek",
+      projects: "Pengalaman",
+      projectList: "Proyek",
       skills: "Keahlian",
       contact: "Kontak",
       cv: "CV",
@@ -203,6 +208,11 @@ const highlights = {
     "Full Stack Development & UI/UX Design",
     "Proyek Teknis & Security Assessment",
   ],
+};
+
+const heroRoles = {
+  en: ["Cyber Security", "Software Engineer", "UI/UX Designer"],
+  id: ["Cyber Security", "Software Engineer", "UI/UX Designer"],
 };
 
 const stats = {
@@ -543,6 +553,10 @@ function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeModal, setActiveModal] = useState(null); // "cv" or "certificates"
   const [aboutExpanded, setAboutExpanded] = useState(false);
+  const [typedAboutDescription, setTypedAboutDescription] = useState("");
+  const [introPhase, setIntroPhase] = useState("active");
+  const [introProgress, setIntroProgress] = useState(0);
+  const [heroRoleIndex, setHeroRoleIndex] = useState(0);
   const orbRef = useRef(null);
   const heroImageRef = useRef(null);
   const scrollProgressRef = useRef(null);
@@ -567,8 +581,45 @@ function App() {
   const t = translations[language];
 
   useEffect(() => {
+    if (!aboutExpanded) {
+      setTypedAboutDescription("");
+      return undefined;
+    }
+
+    const description = t.about.description;
+    let characterIndex = 0;
+    setTypedAboutDescription("");
+
+    const typeTimer = window.setInterval(() => {
+      characterIndex += 2;
+      setTypedAboutDescription(description.slice(0, characterIndex));
+
+      if (characterIndex >= description.length) {
+        window.clearInterval(typeTimer);
+      }
+    }, 18);
+
+    return () => window.clearInterval(typeTimer);
+  }, [aboutExpanded, language, t.about.description]);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (prefersReducedMotion) return undefined;
+
+    const roleTimer = window.setInterval(() => {
+      setHeroRoleIndex(
+        (currentIndex) => (currentIndex + 1) % heroRoles[language].length,
+      );
+    }, 2600);
+
+    return () => window.clearInterval(roleTimer);
+  }, [language]);
+
+  useEffect(() => {
     const pointerHoverTargets = document.querySelectorAll(
-      ".brand, .nav-links a, .nav-links button, .menu-toggle, .lang-toggle, .theme-toggle, .btn, .highlight-list li, .status-pill, .card, .stat-card, .hero-card, .project-card, .service-card, .experience-card, .certificate-card, .skill-card, .tag-list span, .contact-links a, .site-footer a",
+      ".card, .hero-card, .project-card, .service-card, .experience-card, .certificate-card, .skill-card, .contact-form",
     );
 
     const handlePointerMove = (event) => {
@@ -616,6 +667,27 @@ function App() {
 
   useEffect(() => {
     setReady(true);
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const introExitDelay = prefersReducedMotion ? 500 : 3200;
+    const introProgressTimer = window.setInterval(
+      () => {
+        setIntroProgress((currentProgress) =>
+          Math.min(100, currentProgress + 2),
+        );
+      },
+      Math.max(10, introExitDelay / 50),
+    );
+    const introExitTimer = window.setTimeout(() => {
+      window.clearInterval(introProgressTimer);
+      setIntroProgress(100);
+      setIntroPhase("leaving");
+    }, introExitDelay);
+    const introFinishTimer = window.setTimeout(
+      () => setIntroPhase("done"),
+      introExitDelay + (prefersReducedMotion ? 120 : 720),
+    );
 
     const revealItems = document.querySelectorAll(".reveal-on-scroll");
     const observer = new IntersectionObserver(
@@ -659,11 +731,22 @@ function App() {
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
+      window.clearInterval(introProgressTimer);
+      window.clearTimeout(introExitTimer);
+      window.clearTimeout(introFinishTimer);
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = introPhase === "done" ? "" : "hidden";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [introPhase]);
 
   useEffect(() => {
     const savedTheme = window.localStorage.getItem("theme");
@@ -796,11 +879,67 @@ function App() {
 
   return (
     <div className={`app-shell ${ready ? "is-ready" : ""}`}>
+      {introPhase !== "done" && (
+        <div
+          className={`intro-loader intro-loader--${introPhase}`}
+          role="status"
+          aria-label="Memuat portfolio Paulus Firal"
+        >
+          <div className="intro-starfield" aria-hidden="true" />
+          <div className="intro-grid" aria-hidden="true" />
+          <div className="intro-orbit intro-orbit-one" aria-hidden="true" />
+          <div className="intro-orbit intro-orbit-two" aria-hidden="true" />
+          <div className="intro-black-hole" aria-hidden="true">
+            <div className="intro-accretion-ring" />
+            <div className="intro-event-horizon" />
+          </div>
+          <div className="intro-meteor intro-meteor-one" aria-hidden="true" />
+          <div className="intro-meteor intro-meteor-two" aria-hidden="true" />
+          <div className="intro-loader-copy">
+            <p className="intro-loader-kicker">PAULUS FIRAL OHOIWUTUN</p>
+            <h2>
+              WELCOME <span>TO MY PORTFOLIO</span>
+            </h2>
+            <div className="intro-loader-progress" aria-hidden="true">
+              <span />
+            </div>
+            <p className="intro-loader-status" aria-live="polite">
+              LOADING{" "}
+              <span className="intro-loader-percent">{introProgress}%</span>·
+              Memuat pengalaman digital...
+            </p>
+          </div>
+        </div>
+      )}
       <div
         className="scroll-progress"
         ref={scrollProgressRef}
         aria-hidden="true"
       />
+      <aside className="scroll-rail" aria-label="Section navigation">
+        {[
+          ["home", t.nav.home],
+          ["about", t.nav.about],
+          ["experience", t.nav.projects],
+          ["projects", t.nav.projectList],
+          ["skills", t.nav.skills],
+          ["contact", t.nav.contact],
+        ].map(([sectionId, label]) => (
+          <a
+            href={`#${sectionId}`}
+            className={activeSection === sectionId ? "is-active" : ""}
+            key={sectionId}
+            aria-label={label}
+            title={label}
+            onClick={(event) => {
+              event.preventDefault();
+              handleNavClick(sectionId);
+            }}
+          >
+            <span />
+          </a>
+        ))}
+      </aside>
       <header className="site-header">
         <div className="container nav-bar">
           <a href="#home" className="brand">
@@ -834,32 +973,50 @@ function App() {
             <a
               href="#home"
               className={activeSection === "home" ? "active" : ""}
-              onClick={() => setActiveSection("home")}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick("home");
+              }}
             >
               {t.nav.home}
             </a>
             <a
               href="#about"
               className={activeSection === "about" ? "active" : ""}
-              onClick={() => setActiveSection("about")}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick("about");
+              }}
             >
               {t.nav.about}
             </a>
             <a
               href="#experience"
-              className={
-                activeSection === "experience" || activeSection === "projects"
-                  ? "active"
-                  : ""
-              }
-              onClick={() => setActiveSection("experience")}
+              className={activeSection === "experience" ? "active" : ""}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick("experience");
+              }}
             >
               {t.nav.projects}
             </a>
             <a
+              href="#projects"
+              className={activeSection === "projects" ? "active" : ""}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick("projects");
+              }}
+            >
+              {t.nav.projectList}
+            </a>
+            <a
               href="#skills"
               className={activeSection === "skills" ? "active" : ""}
-              onClick={() => setActiveSection("skills")}
+              onClick={(event) => {
+                event.preventDefault();
+                handleNavClick("skills");
+              }}
             >
               {t.nav.skills}
             </a>
@@ -906,7 +1063,10 @@ function App() {
         <a
           href="#home"
           className={activeSection === "home" ? "active" : ""}
-          onClick={() => setActiveSection("home")}
+          onClick={(event) => {
+            event.preventDefault();
+            handleNavClick("home");
+          }}
         >
           <House aria-hidden="true" />
           <span>{t.nav.home}</span>
@@ -914,7 +1074,10 @@ function App() {
         <a
           href="#about"
           className={activeSection === "about" ? "active" : ""}
-          onClick={() => setActiveSection("about")}
+          onClick={(event) => {
+            event.preventDefault();
+            handleNavClick("about");
+          }}
         >
           <UserRound aria-hidden="true" />
           <span>{t.nav.about}</span>
@@ -922,7 +1085,10 @@ function App() {
         <a
           href="#experience"
           className={activeSection === "experience" ? "active" : ""}
-          onClick={() => setActiveSection("experience")}
+          onClick={(event) => {
+            event.preventDefault();
+            handleNavClick("experience");
+          }}
         >
           <BriefcaseBusiness aria-hidden="true" />
           <span>{language === "en" ? "Experience" : "Pengalaman"}</span>
@@ -930,7 +1096,10 @@ function App() {
         <a
           href="#projects"
           className={activeSection === "projects" ? "active" : ""}
-          onClick={() => setActiveSection("projects")}
+          onClick={(event) => {
+            event.preventDefault();
+            handleNavClick("projects");
+          }}
         >
           <LayoutGrid aria-hidden="true" />
           <span>{language === "en" ? "Projects" : "Proyek"}</span>
@@ -938,7 +1107,10 @@ function App() {
         <a
           href="#skills"
           className={activeSection === "skills" ? "active" : ""}
-          onClick={() => setActiveSection("skills")}
+          onClick={(event) => {
+            event.preventDefault();
+            handleNavClick("skills");
+          }}
         >
           <Wrench aria-hidden="true" />
           <span>{t.nav.skills}</span>
@@ -959,12 +1131,24 @@ function App() {
       <main id="home">
         <section className="hero reveal-on-scroll">
           <InteractiveNeuralVortex />
+          <Suspense fallback={null}>
+            <CyberOrb />
+          </Suspense>
           <div className="container hero-grid">
             <div className="hero-copy">
               <p className="eyebrow">{t.hero.eyebrow}</p>
               <h1 className="hero-title">
                 <span>{t.hero.title}</span>
               </h1>
+              <p className="hero-role" aria-live="polite">
+                <span className="hero-role-index">0{heroRoleIndex + 1}</span>
+                <span
+                  className="hero-role-name"
+                  key={`${language}-${heroRoleIndex}`}
+                >
+                  {heroRoles[language][heroRoleIndex]}
+                </span>
+              </p>
               <div className="hero-actions">
                 <a href="#projects" className="btn btn-primary">
                   {t.hero.viewProjects}
@@ -980,30 +1164,36 @@ function App() {
               </div>
             </div>
             <div className="card hero-card">
-              <img
-                ref={heroImageRef}
-                src="/paulfir/profile.jpg"
-                alt="Paulus Firal"
-                className="hero-image"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = "/paulfir/profile.svg";
-                }}
-              />
+              <div className="hero-depth-frame">
+                <span className="hero-depth-line hero-depth-line-one" />
+                <span className="hero-depth-line hero-depth-line-two" />
+                <img
+                  ref={heroImageRef}
+                  src="/paulfir/profile.jpg"
+                  alt="Paulus Firal"
+                  className="hero-image"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/paulfir/profile.svg";
+                  }}
+                />
+              </div>
               <span className="hero-badge">{t.hero.badge}</span>
             </div>
           </div>
         </section>
 
-        <section id="about" className="section reveal-on-scroll">
+        <section id="about" className="section about-section reveal-on-scroll">
           <div className="container about-grid">
             <div className="card about-card">
               <p className="eyebrow section-label">{t.about.eyebrow}</p>
               <h2>{t.about.title}</h2>
               <p
-                className={`about-description ${aboutExpanded ? "is-expanded" : ""}`}
+                className={`about-description ${aboutExpanded ? "is-expanded" : ""} ${aboutExpanded && typedAboutDescription.length < t.about.description.length ? "is-typing" : ""}`}
+                aria-live="polite"
               >
-                {t.about.description}
+                {typedAboutDescription}
+                <span className="typing-caret" aria-hidden="true" />
               </p>
               <button
                 className="about-toggle"
@@ -1020,12 +1210,13 @@ function App() {
           </div>
         </section>
 
-        <section id="experience" className="section reveal-on-scroll">
+        <section
+          id="experience"
+          className="section experience-section reveal-on-scroll"
+        >
           <div className="container">
             <p className="eyebrow section-label">
-              {language === "en"
-                ? "Experience & Projects"
-                : "Pengalaman dan Proyek"}
+              {language === "en" ? "Experience" : "Pengalaman"}
             </p>
             <div className="experience-grid timeline">
               {experienceDetails[language].map((item, index) => (
@@ -1112,12 +1303,18 @@ function App() {
           </div>
         </section>
 
-        <section id="projects" className="section reveal-on-scroll">
+        <section
+          id="projects"
+          className="section projects-section reveal-on-scroll"
+        >
           <div className="container">
+            <p className="eyebrow section-label">
+              {language === "en" ? "Projects" : "Proyek"}
+            </p>
             <div className="card-grid">
-              {projects[language].map((project) => (
+              {projects[language].map((project, index) => (
                 <article
-                  className="card project-card reveal-on-scroll"
+                  className={`card project-card ${index === 0 ? "project-card--featured" : ""} reveal-on-scroll`}
                   key={project.title}
                   onClick={() => handleOpenProject(project)}
                   role="button"
@@ -1154,11 +1351,31 @@ function App() {
           </div>
         </section>
 
-        <section id="skills" className="section reveal-on-scroll">
+        <section
+          id="skills"
+          className="section skills-section reveal-on-scroll"
+        >
           <div className="container">
             <p className="eyebrow section-label">
               {language === "en" ? "Skills" : "Keahlian"}
             </p>
+            <div
+              className="skill-constellation"
+              aria-label="Interactive skill constellation"
+            >
+              <div className="skill-constellation-orbit orbit-large" />
+              <div className="skill-constellation-orbit orbit-small" />
+              <div className="skill-constellation-core">SKILLS</div>
+              {skillGroups.map((group, index) => (
+                <span
+                  className={`skill-constellation-node skill-constellation-node--${index}`}
+                  key={group.title}
+                  title={group.items.join(", ")}
+                >
+                  {group.title}
+                </span>
+              ))}
+            </div>
             <div className="skill-grid">
               {skillGroups.map((group) => (
                 <div className="card skill-card" key={group.title}>
@@ -1174,7 +1391,10 @@ function App() {
           </div>
         </section>
 
-        <section id="contact" className="section alt reveal-on-scroll">
+        <section
+          id="contact"
+          className="section alt contact-section reveal-on-scroll"
+        >
           <div className="container contact-grid">
             <div>
               <p className="eyebrow section-label">{t.contact.eyebrow}</p>
@@ -1232,7 +1452,20 @@ function App() {
                 </a>
               </div>
             </div>
-            <form className="card contact-form" onSubmit={handleSubmit}>
+            <form
+              className="card contact-form terminal-form"
+              onSubmit={handleSubmit}
+            >
+              <div className="terminal-bar" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+                <code>
+                  {language === "en"
+                    ? "LET'S CONNECT"
+                    : "TERHUBUNG DENGAN SAYA"}
+                </code>
+              </div>
               <input
                 placeholder={t.contact.name}
                 value={formData.name}
@@ -1384,6 +1617,7 @@ function App() {
         <div className="container footer-row">
           <p>© 2026 Paulus Firal Ohoiwutun</p>
           <a href="#home">
+            <ArrowUp aria-hidden="true" size={16} />
             {language === "en" ? "Back to Home" : "Kembali ke beranda"}
           </a>
         </div>
